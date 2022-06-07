@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "flask-course"
+version = "0.1.0"
+description = "UDemy Flask course"
+authors = ["Shiul93 <lfllamas93@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Flask = "^2.1.2"
+
+[tool.poetry.dev-dependencies]
+Flask = "^2.1.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
