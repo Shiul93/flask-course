@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 
 #App definition
 app = Flask(__name__)
@@ -7,18 +7,22 @@ app = Flask(__name__)
 stores = [
     {
         'name':'store_name',
-        'items:':[
+        'items':[
             {
-                'name': 'My item',
+                'name': 'My_item',
                 'price':'9.99'
             }
         ]
     }
 ]
 
+@app.route('/')
+def home():
+    return render_template('index.html')
+
 # POST /store data: {name:}
 @app.route('/store', methods=['POST'])
-def create_store(data):
+def create_store():
     request_data = request.get_json()
     new_store = {
         'name': request_data['name'],
@@ -32,7 +36,7 @@ def create_store(data):
 @app.route('/store/<string:name>')
 def get_store(name):
     for store in stores:
-        if name == request_data['name']:
+        if name == store['name']:
               return jsonify(store)
 
 # GET /store
@@ -44,27 +48,28 @@ def get_stores():
 # POST /store/<string:name>/item
 @app.route('/store/<string:name>/item', methods=['POST'])
 def create_item_in_store(name):
-    if name in stores:
-        request_data = request.get_json()
-        new_item = {
-            'name': request_data['name'],
-            'price':float(request_data['name'])
+    for store in stores:
+        if store['name'] == name:
+            request_data = request.get_json()
+            new_item = {
+                'name': request_data['name'],
+                'price':float(request_data['price'])
 
-        }
-        stores[name]['items'].append(new_item)
-        return jsonify(new_item)
+            }
+            store['items'].append(new_item)
+            return jsonify(new_item)
     else:
         return jsonify({'message': 'store not found'})
 
 
 # #Get /store/<string:name>/item
 @app.route('/store/<string:name>/item')
-def get_items_in_store(name):
-    for store in stores:
-        if store['name'] == name:
-            return jsonify({'items': store['items']})
+def get_item_in_store(name):
+  for store in stores:
     
-    return jsonify({'message': 'store not found'})
-
+    if store['name'] == name:
+        print(store)
+        return jsonify( {'items':store['items'] } )
+  return jsonify ({'message':'store not found'})
 
 app.run(port=8088)
