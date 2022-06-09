@@ -1,14 +1,15 @@
 [tool.poetry]
-name = "flask-course2"
+name = "flask-course4"
 version = "0.1.0"
 description = ""
 authors = ["Shiul93 <lfllamas93@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.8"
 Flask = "^2.1.2"
 Flask-RESTful = "^0.3.9"
-
+Flask-JWT = "^0.3.2"
+Werkzeug = "2.0.0"
 [tool.poetry.dev-dependencies]
 
 [build-system]
