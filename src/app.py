@@ -1,75 +1,22 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask
+from flask_restful import Api
+from flask_jwt import JWT
 
-#App definition
+from security import authenticate, identity
+from resources.user import UserRegister
+from resources.item import Item, ItemList
 app = Flask(__name__)
+app.secret_key ='secret'
+api = Api(app)
 
-#Endpoint definition
-stores = [
-    {
-        'name':'store_name',
-        'items':[
-            {
-                'name': 'My_item',
-                'price':'9.99'
-            }
-        ]
-    }
-]
-
-@app.route('/')
-def home():
-    return render_template('index.html')
-
-# POST /store data: {name:}
-@app.route('/store', methods=['POST'])
-def create_store():
-    request_data = request.get_json()
-    new_store = {
-        'name': request_data['name'],
-        'items':[]
-
-    }
-    stores.append(new_store)
-    return jsonify(new_store)
-
-# GET /store/<string:name>
-@app.route('/store/<string:name>')
-def get_store(name):
-    for store in stores:
-        if name == store['name']:
-              return jsonify(store)
-
-# GET /store
-@app.route('/store')
-def get_stores():
-    return jsonify({'stores':stores})
+jwt = JWT(app, authenticate, identity) #/auth
 
 
-# POST /store/<string:name>/item
-@app.route('/store/<string:name>/item', methods=['POST'])
-def create_item_in_store(name):
-    for store in stores:
-        if store['name'] == name:
-            request_data = request.get_json()
-            new_item = {
-                'name': request_data['name'],
-                'price':float(request_data['price'])
-
-            }
-            store['items'].append(new_item)
-            return jsonify(new_item)
-    else:
-        return jsonify({'message': 'store not found'})
 
 
-# #Get /store/<string:name>/item
-@app.route('/store/<string:name>/item')
-def get_item_in_store(name):
-  for store in stores:
-    
-    if store['name'] == name:
-        print(store)
-        return jsonify( {'items':store['items'] } )
-  return jsonify ({'message':'store not found'})
+api.add_resource(Item, "/item/<string:name>")
+api.add_resource(ItemList, "/items")
+api.add_resource(UserRegister, "/register")
 
-app.run(port=8088)
+if __name__ == '__main__':
+    app.run(port=8088, debug=True)
